@@ -1,70 +1,85 @@
-class MyTime(hourValue:Int,minuteValue:Int,secondValue:Int) {
+class MyTime(hoursValue:Int, minutesValue:Int, secondsValue:Int) {
    init {
-       require(hourValue >= 0 && hourValue<24) { "hour must be positive and less then 24" }
-       require(minuteValue >= 0 && minuteValue<60) { "minute must be positive and less then 60" }
-       require(secondValue >= 0 && secondValue<60) { "second must be positive and less then 60" }
-   }
-   var hour = hourValue
-       set(value) {
-           require(value>=0 && value<24) {"value must be positive and less then 24 "}
-           field=value
-       }
-
-
-   var minute = minuteValue
-       set(value) {
-           require(value>=0 && value<60) {"value must be positive and less then 60 "}
-           field=value
-       }
-   var second=secondValue
-       set(value) {
-           require(value>=0 && value<60) {"value must be positive and less then 60 "}
-           field=value
-       }
-
-
-   fun convertInSecond(): Int {
-       val hoursInSeconds = hour * 3600
-       val minutesInSeconds = minute * 60
-       val timeInSeconds = hoursInSeconds + minutesInSeconds + second
-       return timeInSeconds
-       //return hour * 3600 + minute * 60 + second
+    require(hoursValue in 0..23){"The hours value must be positive and less than 24"}
+    require(minutesValue in 0..59){"The minutes value must be positive and less than 60"}
+    require(secondsValue in 0..59){"The seconds value must be positive and less than 60"}
    }
 
+   var secondsSinceFirstMidnight = (hoursValue * 60 * 60) + (minutesValue * 60) + secondsValue
+     private set(value) {
+         require(value >= 0){"The given value must be higher or equal to 0"}
+   
+         field = value
+   }
+   
+   var hours:Int
+     get() {
+         val daySeconds = secondsSinceFirstMidnight % 86400 //86400 = 1 day
+
+         return daySeconds / 3600 //3600 = 1 hour
+     }
+     
+   var minutes:Int
+     get() {
+         val daySeconds = secondsSinceFirstMidnight % 86400
+         val remainingSecondsAfterHours = daySeconds % 3600
+         return remainingSecondsAfterHours / 60
+     }
+       
+   var seconds:Int
+     get() {
+         return secondsSinceFirstMidnight % 60
+     }
+
+   val daysSinceFirstMidnight:Int //Only here to be used in future cases
+     get() {
+         return secondsSinceFirstMidnight / 86400
+     }
 
    fun addSeconds(secondsToAdd: Int) {
-       require(secondsToAdd>=0){"newSeconds must be positive"}
-       val newTime = this.convertInSecond() + secondsToAdd
-       hour = newTime / 3600
-       minute = (newTime - (3600 * hour)) / 60
-       second = newTime - (3600 * hour) - (60 * minute)
+        require(secondsToAdd > 0){"The given value must be higher than 0"}
+
+        secondsSinceFirstMidnight += secondsToAdd
    }
 
-
    fun isPrevious(time: MyTime): Boolean {
-       if (time.convertInSecond() > this.convertInSecond())
-           return true
-       else
-           return false
+        return time.secondsSinceFirstMidnight > this.secondsSinceFirstMidnight
    }
 
 
    fun differenceTime(time: MyTime): Int {
-       val different= convertInSecond()-time.convertInSecond()
-       return different
+        /**
+         * Since we don't use a unique epoch timestamp,
+         * this function calculates the difference between the two times
+         * assuming they are on the same day, and ignores the fact that
+         * they could be on different days of distance
+         */
+
+        val difference = time.secondsSinceFirstMidnight - this.secondsSinceFirstMidnight
+
+        return if(difference > 0) {
+            difference
+        } else if (difference < 0) {
+            86400 - Math.abs(difference)
+        } else 0
    }
 
 
    override fun equals(other: Any?): Boolean {
-       if (other is MyTime)
-           return hour==other.hour && minute == other.minute && second == other.second
-       return false
+        /**
+         * Since we don't use a unique epoch timestamp,
+         * this function calculates the difference between the two times
+         * assuming they are on the same day, and ignores the fact that
+         * they could be on different days of distance
+         */
+
+        if(this === other) return true
+        if(other !is MyTime) return false
+        return this.secondsSinceFirstMidnight == other.secondsSinceFirstMidnight
    }
 
 
    override fun hashCode(): Int {
-       return hour.hashCode()+minute.hashCode()+second.hashCode()
+        return secondsSinceFirstMidnight.hashCode()
    }
-
-
 }
