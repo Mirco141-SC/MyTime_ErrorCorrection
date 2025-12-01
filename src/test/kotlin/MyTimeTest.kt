@@ -5,29 +5,34 @@ import org.junit.jupiter.api.assertThrows
 
 class MyTimeTest {
    /************************** Constructor ********************************/
-   @Test
+   @Suppress("TestFunctionName") @Test
    fun MyTime_hourLessThan0_IllegalArgumentException(){
-       assertThrows<IllegalArgumentException> { val time = MyTime(-1,0,0) }
+       assertThrows<IllegalArgumentException> {MyTime(-1,0,0)}
    }
-   @Test
+   
+   @Suppress("TestFunctionName") @Test
    fun MyTime_hourGreatherThan23_IllegalArgumentException(){
-       assertThrows<IllegalArgumentException> { val time = MyTime(24,0,0) }
+       assertThrows<IllegalArgumentException> {MyTime(24,0,0)}
    }
-   @Test
+   
+   @Suppress("TestFunctionName") @Test
    fun MyTime_minuteGreatherThan59_IllegalArgumentException(){
-       assertThrows<IllegalArgumentException> { val time = MyTime(1,60,0) }
+       assertThrows<IllegalArgumentException> {MyTime(1,60,0)}
    }
-   @Test
+   
+   @Suppress("TestFunctionName") @Test
    fun MyTime_secondGreatherThan59_IllegalArgumentException(){
-       assertThrows<IllegalArgumentException> { val time = MyTime(1,0,60) }
+       assertThrows<IllegalArgumentException> {MyTime(1,0,60)}
    }
-   @Test
+   
+   @Suppress("TestFunctionName") @Test
    fun MyTime_secondLessThan0_IllegalArgumentException(){
-       assertThrows<IllegalArgumentException> { val time = MyTime(1,0,-1) }
+       assertThrows<IllegalArgumentException> {MyTime(1,0,-1)}
    }
-   @Test
+   
+   @Suppress("TestFunctionName") @Test
    fun MyTime_minutesLessThan0_IllegalArgumentException(){
-       assertThrows<IllegalArgumentException> { val time = MyTime(1,-1,0) }
+       assertThrows<IllegalArgumentException> {MyTime(1,-1,0)}
    }
 
 
